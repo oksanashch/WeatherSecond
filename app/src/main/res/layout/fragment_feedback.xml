@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".FeedbackFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_height="fill_parent">
+
+        <EditText
+            android:id="@+id/EditTextName"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Введите имя"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/EditTextEmail"
+            android:layout_height="wrap_content"
+            android:hint="Введите свой e-mail"
+            android:inputType="textEmailAddress"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/EditTextFeedbackBody"
+            android:layout_height="wrap_content"
+            android:hint="Введите текст сообщения"
+            android:inputType="textMultiLine"
+            android:lines="5"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <Button
+            android:id="@+id/ButtonSendFeedback"
+            android:layout_height="wrap_content"
+            android:text="Отправить сообщение"
+            android:layout_width="fill_parent">
+        </Button>
+    </LinearLayout>
+
+
+    </ScrollView>
