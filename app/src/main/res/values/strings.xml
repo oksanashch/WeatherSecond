@@ -13,16 +13,22 @@
     <string name="menu_tools">About</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Feedback</string>
-    <string name="change_city">Change city</string>
+    <string name="menu_sensors">Sensors</string>
 
     <string name="open_weather_maps_app_id">appid=ca0643207bc5ac6da08b6bf2cc93e560</string>
 
     <string name="place_not_found">Sorry, no weather data found.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sensors">Temperature and humidity</string>
     <string name="android">Android. Продвинутый уровень</string>
-    <string name="authotname">Щукина Оксана</string>
+    <string name="enter_Name">Введите имя</string>
+    <string name="enter_Mail">Введите свой e-mail</string>
+    <string name="enter_Msg">Введите текст сообщения</string>
+    <string name="sendMsg">Отправить сообщение</string>
+    <string name="change_city">Change city</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidity">Humidity</string>
 
 
 </resources>

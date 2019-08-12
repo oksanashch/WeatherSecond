@@ -3,10 +3,10 @@ package com.example.weathersecond;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
-public class CityPreference {
-    SharedPreferences prefs;
+class CityPreference {
+    private SharedPreferences prefs;
 
-    public CityPreference(Activity activity){
+    CityPreference(Activity activity){
         prefs = activity.getPreferences(Activity.MODE_PRIVATE);
     }
 
@@ -15,6 +15,6 @@ public class CityPreference {
     }
 
     void setCity(String city){
-        prefs.edit().putString("city", city).commit();
+        prefs.edit().putString("city", city).apply();
     }
 }

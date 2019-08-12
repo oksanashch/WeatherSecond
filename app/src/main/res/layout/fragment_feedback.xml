@@ -16,7 +16,7 @@
             android:id="@+id/EditTextName"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Введите имя"
+            android:hint="@string/enter_Name"
             android:inputType="textPersonName"
             android:layout_width="fill_parent">
         </EditText>
@@ -24,7 +24,7 @@
         <EditText
             android:id="@+id/EditTextEmail"
             android:layout_height="wrap_content"
-            android:hint="Введите свой e-mail"
+            android:hint="@string/enter_Mail"
             android:inputType="textEmailAddress"
             android:layout_width="fill_parent">
         </EditText>
@@ -32,7 +32,7 @@
         <EditText
             android:id="@+id/EditTextFeedbackBody"
             android:layout_height="wrap_content"
-            android:hint="Введите текст сообщения"
+            android:hint="@string/enter_Msg"
             android:inputType="textMultiLine"
             android:lines="5"
             android:layout_width="fill_parent">
@@ -41,7 +41,7 @@
         <Button
             android:id="@+id/ButtonSendFeedback"
             android:layout_height="wrap_content"
-            android:text="Отправить сообщение"
+            android:text="@string/sendMsg"
             android:layout_width="fill_parent">
         </Button>
     </LinearLayout>

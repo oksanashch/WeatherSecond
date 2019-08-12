@@ -1,22 +1,22 @@
 package com.example.weathersecond.WeatherData;
 
 public class Wind {
-    private int speed;
-    private int deg;
+    private float speed;
+    private float deg;
 
-    public int getDeg() {
+    public float getDeg() {
         return deg;
     }
 
-    public void setDeg(int deg) {
+    public void setDeg(float deg) {
         this.deg = deg;
     }
 
-    public int getSpeed() {
+    public float getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(float speed) {
         this.speed = speed;
     }
 

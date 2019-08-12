@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar;
 import android.text.InputType;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 
@@ -27,6 +28,8 @@ import androidx.fragment.app.FragmentManager;
 import android.view.Menu;
 import android.widget.EditText;
 
+import java.util.Objects;
+
 public class WeatherActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -41,6 +44,11 @@ public class WeatherActivity extends AppCompatActivity
         }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        initSideMenu(toolbar);
+
+    }
+
+    private void initSideMenu(Toolbar toolbar) {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -49,6 +57,7 @@ public class WeatherActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -69,7 +78,7 @@ public class WeatherActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.change_city){
+        if(item.getItemId() == R.id.change_city) {
             showInputDialog();
         }
         return false;
@@ -90,14 +99,13 @@ public class WeatherActivity extends AppCompatActivity
         builder.show();
     }
 
-    public void changeCity(String city){
+    private void changeCity(String city){
         WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.container);
-        wf.changeCity(city);
+        (wf).changeCity(city);
         new CityPreference(this).setCity(city);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
@@ -108,6 +116,10 @@ public class WeatherActivity extends AppCompatActivity
             fragmentClass = AboutFragment.class;
         } else if (id == R.id.nav_send) {
             fragmentClass = FeedbackFragment.class;
+        } else if (id == R.id.nav_home) {
+            fragmentClass = WeatherFragment.class;
+        } else if (id == R.id.nav_sensors) {
+            fragmentClass = SensorFragment.class;
         }
         try {
             fragment = (Fragment)fragmentClass.newInstance();
