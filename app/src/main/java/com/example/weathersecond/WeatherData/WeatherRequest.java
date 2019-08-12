@@ -9,6 +9,8 @@ public class WeatherRequest {
     private Sys sys;
     private long dt;
     private String name;
+    private int cod;
+    private String message;
 
     public Coord getCoord() {
         return coord;
@@ -73,5 +75,21 @@ public class WeatherRequest {
 
     public void setDt(long dt) {
         this.dt = dt;
+    }
+
+    public int getCod() {
+        return cod;
+    }
+
+    public void setCod(int cod) {
+        this.cod = cod;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
