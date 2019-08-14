@@ -68,31 +68,33 @@ public class WeatherFragment extends Fragment {
                 @Override
                 public void run() {
                     String respCode = intent.getStringExtra(WeatherDataService.RESPOND_CODE);
-                    assert respCode != null;
-                    if (respCode.equals("200")) {
-                        String cityName = intent.getStringExtra(WeatherDataService.CITYNAME);
-                        cityField.setText(cityName);
-                        String temp = intent.getStringExtra(WeatherDataService.TEMP);
-                        currentTemperatureField.setText(temp);
-                        String press = intent.getStringExtra(WeatherDataService.PRESS);
-                        pressureField.setText(press);
-                        String humid = intent.getStringExtra(WeatherDataService.HUMID);
-                        humidityField.setText(humid + "%");
-                        int actualId = Integer.valueOf(intent.getStringExtra(WeatherDataService.ACTID));
-                        long sunrise = Long.valueOf(intent.getStringExtra(WeatherDataService.SUNRISE));
-                        long sunset = Long.valueOf(intent.getStringExtra(WeatherDataService.SUNSET));
-                        setWeatherIcon(actualId, sunrise, sunset);
-                        String updateOn = intent.getStringExtra(WeatherDataService.UPDATE_ON);
-                        updatedField.setText("Last update: " + updateOn);
-                    }
-                    else {
-                        String msg = intent.getStringExtra(WeatherDataService.ERRORMSG);
-                        if (msg != null) {
-                            Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                    if (respCode == null) {
+                        Toast.makeText(getActivity(), "NO DATA", Toast.LENGTH_LONG).show();
+                    } else {
+                        if (respCode.equals("200")) {
+                            String cityName = intent.getStringExtra(WeatherDataService.CITYNAME);
+                            cityField.setText(cityName);
+                            String temp = intent.getStringExtra(WeatherDataService.TEMP);
+                            currentTemperatureField.setText(temp);
+                            String press = intent.getStringExtra(WeatherDataService.PRESS);
+                            pressureField.setText(press);
+                            String humid = intent.getStringExtra(WeatherDataService.HUMID);
+                            humidityField.setText(humid + "%");
+                            int actualId = Integer.valueOf(intent.getStringExtra(WeatherDataService.ACTID));
+                            long sunrise = Long.valueOf(intent.getStringExtra(WeatherDataService.SUNRISE));
+                            long sunset = Long.valueOf(intent.getStringExtra(WeatherDataService.SUNSET));
+                            setWeatherIcon(actualId, sunrise, sunset);
+                            String updateOn = intent.getStringExtra(WeatherDataService.UPDATE_ON);
+                            updatedField.setText("Last update: " + updateOn);
                         } else {
-                            Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
+                            String msg = intent.getStringExtra(WeatherDataService.ERRORMSG);
+                            if (msg != null) {
+                                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
+                }
                 }
             });
         }
