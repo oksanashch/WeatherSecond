@@ -3,6 +3,7 @@ package com.example.weathersecond;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,19 +14,15 @@ import android.view.ViewGroup;
 
 public class AboutFragment extends Fragment {
 
-
     public AboutFragment() {
-        // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_about, container, false);
-
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.example.weathersecond;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,28 +16,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.example.weathersecond.WeatherData.ErrorResponseWeather;
-import com.example.weathersecond.WeatherData.WeatherRequest;
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import static java.lang.String.format;
-
 public class WeatherFragment extends Fragment {
-    private static final String WEATHER_URL =
-            "https://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=ca0643207bc5ac6da08b6bf2cc93e560";
+    final static String BROADCAST_ACTION = "android_2.lesson04.app01.service_finished";
+
+    private ServiceFinishedReceiver receiver = new ServiceFinishedReceiver();
 
 
     private TextView cityField;
@@ -44,123 +32,88 @@ public class WeatherFragment extends Fragment {
     private TextView currentTemperatureField;
     private ImageView weatherIcon;
 
-    Handler handler;
-
     public WeatherFragment() {
-        handler = new Handler();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+        initUI(rootView);
+        return rootView;
+    }
+
+    private void initUI(View rootView) {
         cityField = rootView.findViewById(R.id.city_field);
         updatedField = rootView.findViewById(R.id.updated_field);
         pressureField = rootView.findViewById(R.id.pressure_field);
         humidityField = rootView.findViewById(R.id.humidity_field);
         currentTemperatureField = rootView.findViewById(R.id.current_temperature_field);
         weatherIcon = rootView.findViewById(R.id.weather_icon);
-        return rootView;
+    }
+
+        @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+            Intent intent = new Intent(getActivity(), WeatherDataService.class);
+            Objects.requireNonNull(getActivity()).startService(intent);
+    }
+
+    private class ServiceFinishedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+            Objects.requireNonNull(getActivity()).runOnUiThread(new Runnable() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void run() {
+                    String respCode = intent.getStringExtra(WeatherDataService.RESPOND_CODE);
+                    if (respCode == null) {
+                        Toast.makeText(getActivity(), "NO DATA", Toast.LENGTH_LONG).show();
+                    } else {
+                        if (respCode.equals("200")) {
+                            String cityName = intent.getStringExtra(WeatherDataService.CITYNAME);
+                            cityField.setText(cityName);
+                            String temp = intent.getStringExtra(WeatherDataService.TEMP);
+                            currentTemperatureField.setText(temp);
+                            String press = intent.getStringExtra(WeatherDataService.PRESS);
+                            pressureField.setText(press);
+                            String humid = intent.getStringExtra(WeatherDataService.HUMID);
+                            humidityField.setText(humid + "%");
+                            int actualId = Integer.valueOf(intent.getStringExtra(WeatherDataService.ACTID));
+                            long sunrise = Long.valueOf(intent.getStringExtra(WeatherDataService.SUNRISE));
+                            long sunset = Long.valueOf(intent.getStringExtra(WeatherDataService.SUNSET));
+                            setWeatherIcon(actualId, sunrise, sunset);
+                            String updateOn = intent.getStringExtra(WeatherDataService.UPDATE_ON);
+                            updatedField.setText("Last update: " + updateOn);
+                        } else {
+                            String msg = intent.getStringExtra(WeatherDataService.ERRORMSG);
+                            if (msg != null) {
+                                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                }
+                }
+            });
+        }
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        updateWeatherData(new CityPreference(Objects.requireNonNull(getActivity())).getCity());
+    public void onStart() {
+        super.onStart();
+        Objects.requireNonNull(getActivity()).registerReceiver(receiver, new IntentFilter(BROADCAST_ACTION));
     }
 
-    private void updateWeatherData(final String city) {
-
-        try {
-            final URL url = new URL(format(WEATHER_URL, city));
-            final Handler handler = new Handler();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        HttpsURLConnection urlConnection;
-                        urlConnection = (HttpsURLConnection) url.openConnection();
-                        urlConnection.setRequestMethod("GET");
-                        urlConnection.setReadTimeout(10000);
-                        if (urlConnection.getResponseCode() != 200) {
-                            getErrorWeatherRespond(urlConnection);
-                        } else {
-                            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                            String result = getLines(in);
-                            Gson gson = new Gson();
-                            final WeatherRequest weatherRequest = gson.fromJson(result, WeatherRequest.class);
-                            handler.post(new Runnable() {
-                                @SuppressLint("SetTextI18n")
-                                @Override
-                                public void run() {
-                                    cityField.setText(weatherRequest.getName());
-                                    @SuppressLint("DefaultLocale") String temp = format("%.0f C°",
-                                            (double) weatherRequest.getMain().getTemp());
-                                    currentTemperatureField.setText(temp);
-                                    @SuppressLint("DefaultLocale") String press = format("%.0f hPa",
-                                            (double) weatherRequest.getMain().getPressure());
-                                    pressureField.setText(press);
-                                    @SuppressLint("DefaultLocale") String humid = format("%.0f",
-                                            (double) weatherRequest.getMain().getHumidity());
-                                    humidityField.setText(humid + "%");
-                                    int actualId = weatherRequest.getWeather()[0].getId();
-                                    long sunrise = weatherRequest.getSys().getSunrise() * 1000;
-                                    long sunset = weatherRequest.getSys().getSunset() * 1000;
-                                    setWeatherIcon(actualId, sunrise, sunset);
-                                    DateFormat df = DateFormat.getDateTimeInstance();
-                                    String updatedOn = df.format(new Date((weatherRequest.getDt() * 1000)));
-                                    updatedField.setText("Last update: " + updatedOn);
-                                }
-                            });
-                        }
-
-                    } catch (ProtocolException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }).start();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void getErrorWeatherRespond(HttpsURLConnection con) {
-        BufferedReader inErr = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-        String resultErr = getLines(inErr);
-        Gson gson = new Gson();
-        final ErrorResponseWeather errorWeather = gson.fromJson(resultErr, ErrorResponseWeather.class);
-        handler.post(new Runnable() {
-            public void run() {
-                String msg = errorWeather.getMessage();
-                if (msg != null) {
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+    @Override
+    public void onStop() {
+        Objects.requireNonNull(getActivity()).unregisterReceiver(receiver);
+        super.onStop();
 
     }
 
-    private String getLines(BufferedReader in) {
-        StringBuilder result = new StringBuilder();
-        String newLine = System.getProperty("line.separator");
-        try {
-            String line;
-            boolean flag = false;
-            while ((line = in.readLine()) != null) {
-                result.append(flag ? newLine : "").append(line);
-                flag = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result.toString();
 
-    }
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset) {
         int id = actualId / 100;
@@ -196,8 +149,9 @@ public class WeatherFragment extends Fragment {
         }
     }
 
-    public void changeCity(String city) {
-        updateWeatherData(city);
+    void changeCity() {
+        Intent intent = new Intent(getActivity(), WeatherDataService.class);
+        Objects.requireNonNull(getActivity()).startService(intent);
     }
 
 

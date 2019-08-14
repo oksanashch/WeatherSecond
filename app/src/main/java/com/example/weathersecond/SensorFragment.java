@@ -1,12 +1,14 @@
 package com.example.weathersecond;
 
 
+import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -28,16 +30,16 @@ public class SensorFragment extends Fragment {
     private Sensor sensorTemp;
     private Sensor sensorHumid;
 
-
     public SensorFragment() {
     }
 
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_sensor, container, false);
+        setHasOptionsMenu(true);
         initViews(v);
         getSensors();
         return v;
@@ -49,6 +51,7 @@ public class SensorFragment extends Fragment {
         getHumid = v.findViewById(R.id.getHumid);
     }
 
+    @SuppressLint("SetTextI18n")
     private void getSensors() {
         sensorManager = (SensorManager)(Objects.requireNonNull(getActivity())).getSystemService(SENSOR_SERVICE);
         assert sensorManager != null;

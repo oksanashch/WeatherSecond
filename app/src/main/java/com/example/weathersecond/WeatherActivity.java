@@ -1,14 +1,11 @@
 package com.example.weathersecond;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.text.InputType;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -27,8 +24,6 @@ import androidx.fragment.app.FragmentManager;
 
 import android.view.Menu;
 import android.widget.EditText;
-
-import java.util.Objects;
 
 public class WeatherActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -71,13 +66,12 @@ public class WeatherActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.change_city) {
             showInputDialog();
         }
@@ -102,12 +96,14 @@ public class WeatherActivity extends AppCompatActivity
     private void changeCity(String city){
         WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.container);
-        (wf).changeCity(city);
-        new CityPreference(this).setCity(city);
+        assert wf != null;
+        (wf).changeCity();
+        CityPreference prf = new CityPreference(getApplicationContext().getSharedPreferences("city", Activity.MODE_PRIVATE));
+        prf.setCity(city);
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment fragment = null;
         Class fragmentClass = null;
         int id = item.getItemId();
@@ -122,11 +118,13 @@ public class WeatherActivity extends AppCompatActivity
             fragmentClass = SensorFragment.class;
         }
         try {
+            assert fragmentClass != null;
             fragment = (Fragment)fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
+        assert fragment != null;
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         item.setChecked(true);
         setTitle(item.getTitle());
